@@ -1,52 +1,56 @@
-import React from "react";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import Like from "./common/like";
+import Table from "./common/Table";
+import auth from "./../services/authService";
 
-const MoviesTable = props => {
-  const { movies, onDelete, onLike, onSort } = props;
+class MoviesTable extends Component {
+  columns = [
+    {
+      path: "title",
+      label: "Title",
+      content: movie => <Link to={`/movies/${movie._id}`}>{movie.title}</Link>
+    },
+    { path: "genre.name", label: "Genre" },
+    { path: "numberInStock", label: "Stock" },
+    { path: "dailyRentalRate", label: "Rate" },
+    {
+      key: "like",
+      content: movie => (
+        <Like onClick={() => this.props.onLike(movie)} liked={movie.liked} />
+      )
+    }
+  ];
 
-  return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th onClick={() => onSort("title")} scope="col">
-            Movie
-          </th>
-          <th onClick={() => onSort("genre")} scope="col">
-            Genre
-          </th>
-          <th onClick={() => onSort("numberInStock")} scope="col">
-            Stock
-          </th>
-          <th onClick={() => onSort("dailyRentalRate")} scope="col">
-            Rate
-          </th>
-          <th scope="col" />
-          <th scope="col" />
-        </tr>
-      </thead>
-      <tbody>
-        {movies.map(movie => (
-          <tr key={movie._id}>
-            <td>{movie.title}</td>
-            <td>{movie.genre.name}</td>
-            <td>{movie.numberInStock}</td>
-            <td>{movie.dailyRentalRate}</td>
-            <td>
-              <Like onClick={() => onLike(movie)} liked={movie.liked} />
-            </td>
-            <td>
-              <button
-                onClick={() => onDelete(movie)}
-                className="btn btn-danger"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-};
+  componentWillMount() {
+    const user = auth.getCurrentUser();
+    if (user && user.isAdmin) {
+      this.columns.push({
+        key: "delete",
+        content: movie => (
+          <button
+            onClick={() => this.props.onDelete(movie)}
+            className="btn btn-danger"
+          >
+            Delete
+          </button>
+        )
+      });
+    }
+  }
+
+  render() {
+    const { movies, onSort, sortColumn } = this.props;
+
+    return (
+      <Table
+        columns={this.columns}
+        onSort={onSort}
+        sortColumn={sortColumn}
+        data={movies}
+      />
+    );
+  }
+}
 
 export default MoviesTable;
