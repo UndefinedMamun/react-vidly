@@ -8,7 +8,7 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 
-console.log("superman", process.env.REACT_APP_NAME);
+// console.log("superman", process.env.REACT_APP_NAME);
 
 ReactDOM.render(
   <BrowserRouter>

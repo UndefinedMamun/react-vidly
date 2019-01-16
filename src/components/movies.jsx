@@ -104,15 +104,12 @@ class Movies extends Component {
       selectedGenre,
       sortColumn,
       currentPage,
-      movies: allMovies,
       searchQuery
     } = this.state;
 
     const { user } = this.props;
 
     const { data: movies, totalCount } = this.getPageData();
-
-    if (!allMovies.length) return <p>There is no Movie!</p>;
 
     return (
       <div className="row">
